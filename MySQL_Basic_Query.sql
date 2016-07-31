@@ -44,4 +44,43 @@ SELECT *
 FROM actor
 ORDER BY last_name DESC;
 
+-- Retrieve selected columns from table
+
+SELECT first_name, last_name
+FROM actor;
+
+SELECT first_name, last_name
+FROM actor
+ORDER BY first_name DESC;
+
+-- Retrieve the data with filter condition
+
+SELECT *
+FROM actor
+WHERE actor_id > 100;
+
+SELECT * 
+FROM actor
+WHERE actor_id < 100
+ORDER BY first_name;
+
+SELECT actor_id, first_name, last_name
+FROM actor
+WHERE first_name = 'Nick'
+ORDER BY actor_id;
+
+SELECT actor_id, first_name, last_name
+FROM actor
+WHERE actor_id > 100
+ORDER BY first_name, last_name DESC;
+
+-- Retrieve empty result set to get the table attributes
+
+SELECT *
+FROM sakila.address
+WHERE 1=2;
+
+
+
+
 
