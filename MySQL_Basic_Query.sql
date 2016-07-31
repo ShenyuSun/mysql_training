@@ -1,0 +1,5 @@
+SELECT 'MyFirstValue' AS SomeValue;
+
+SELECT 1+1 AS TWO;
+
+SELECT NOW( AS NOW);
