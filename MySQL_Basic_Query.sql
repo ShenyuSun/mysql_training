@@ -370,3 +370,153 @@ DELETE
 FROM ActorSample
 WHERE actor_id IN (SELECT actor_id
 				   FROM actor);
+                   
+
+-- ------------
+-- Join
+-- ------------
+
+CREATE TABLE table1
+(ID INT, Value VARCHAR(10));
+
+CREATE TABLE table2
+(ID INT, Value VARCHAR(10));
+
+INSERT INTO Table1 (ID, Value)
+SELECT 1, 'First'
+UNION ALL
+SELECT 2, 'Second'
+UNION ALL
+SELECT 3, 'Third'
+UNION ALL
+SELECT 4, 'Fourth'
+UNION ALL
+SELECT 5, 'Fifth';
+
+INSERT INTO Table2 (ID, Value)
+SELECT 1, 'First'
+UNION ALL
+SELECT 2, 'Second'
+UNION ALL
+SELECT 3, 'Third'
+UNION ALL
+SELECT 6, 'Sixth'
+UNION ALL
+SELECT 7, 'Seventh'
+UNION ALL
+SELECT 8, 'Eight';
+
+/* INNER JOIN */
+
+SELECT t1.*, t2.*
+FROM table1 t1
+INNER JOIN Table2 t2 ON t1.ID = t2.ID;
+
+SELECT t1.ID AS T1id, t1.Value AS T1value,
+	   t2.ID AS T2id, t2.Value AS T2value
+FROM table1 t1
+INNER JOIN Table2 t2 ON t1.ID = t2.ID;
+
+/* LEFT JOIN */
+
+SELECT t1.ID AS t1ID, t1.value AS t1Value,
+       t2.ID as t2ID, t2.value AS t2Value
+FROM table1 t1
+LEFT JOIN table2 t2 ON t1.ID = t2.ID;
+
+/* RIGHT JOIN */
+
+SELECT t1.ID AS t1ID, t1.value AS t1Value,
+       t2.ID AS t2ID, t2.value AS t2Value
+FROM table1 t1
+RIGHT JOIN table2 t2 ON t1.ID = t2.ID;
+
+/* Full Outer Join */
+-- MySQL doesn't supprt Full outer join.
+-- We need to use left and right join, and use UNION to put them together
+
+SELECT t1.ID AS T1id, t1.value AS T1value,
+	   t2.ID as T2id, t2.value AS T2value
+FROM table1 t1
+LEFT JOIN table2 t2 ON t1.ID = t2.ID
+UNION
+SELECT t1.ID AS T1id, t1.value AS T1value,
+	   t2.ID as T2id, t2.value AS T2value
+FROM table1 t1
+RIGHT JOIN table2 t2 ON t1.ID = t2.ID;
+
+/* CROSS JOIN */
+
+SELECT t1.ID AS T1id, t1.value AS T1value,
+       t2.ID AS T2id, t2.value AS T2value
+FROM table1 t1
+CROSS JOIN table2 t2;
+
+-- --------------
+-- PROBLEM SOLVE
+-- --------------
+
+-- Create tables for problem
+
+CREATE Table Students (StudentID INT, StudentName VARCHAR(10));
+CREATE Table Classes (ClassID INT, ClassName VARCHAR(10));
+CREATE Table StudentClass (StudentID INT, ClassID INT);
+
+INSERT INTO Students (StudentID, StudentName)
+SELECT 1, 'John'
+UNION ALL
+SELECT 2, 'Matt'
+UNION ALL
+SELECT 3, 'James';
+
+INSERT INTO Classes (ClassID, ClassName)
+SELECT 1, 'Maths'
+UNION ALL
+SELECT 2, 'Arts'
+UNION ALL
+SELECT 3, 'History';
+
+
+INSERT INTO StudentClass(StudentID, ClassID)
+SELECT 1, 1
+UNION ALL
+SELECT 1, 2
+UNION ALL
+SELECT 3, 1
+UNION ALL
+SELECT 3, 2
+UNION ALL
+SELECT 3, 3;
+
+SELECT *
+FROM Students;
+SELECT *
+FROM Classes;
+SELECT *
+FROM StudentClass;
+
+/* Question 1: What will be the best possible join if we want to retrieve
+all the students who have signed up for the classes in the summer?
+*/
+
+SELECT st.StudentName, cl.ClassName
+FROM StudentClass sc
+INNER JOIN Classes cl ON cl.ClassID = sc.ClassID
+INNER JOIN Students st ON st.StudentID = sc.StudentID;
+
+/* Question 2: What will be the best possible join if we want to retrieve
+all the students who have signed up fro no classes in summer? */
+
+SELECT st.StudentName, cl.ClassName
+FROM Students st
+LEFT JOIN StudentClass sc ON st.StudentID = sc.StudentID
+LEFT JOIN Classes cl ON cl.ClassID = sc.ClassID
+WHERE cl.ClassName IS NULL;
+
+-- Better version
+
+SELECT st.StudentName
+FROM Students st
+LEFT JOIN StudentClass sc ON st.StudentID = sc.StudentID
+WHERE sc.ClassID IS NULL;
+
